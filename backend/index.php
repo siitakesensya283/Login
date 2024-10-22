@@ -1,5 +1,5 @@
 <?php
-// CORS設定（もし必要であれば、ここは変更しない）
+// CORS設定
 header("Access-Control-Allow-Origin: http://2024isc1231028.weblike.jp");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
@@ -10,12 +10,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// ロリポップ上のデータベース接続情報
+// データベース接続情報
 $host = 'mysql309.phy.lolipop.lan';
 $dbname = 'LAA1593707-testlogin';
 $username = 'LAA1593707';
 $password = 'password';
-$port = '3306'; // ロリポップでは通常このポートを使用
+$port = '3306';
 
 // データベース接続
 try {
@@ -36,12 +36,12 @@ $stmt->bindParam(':userId', $userId);
 $stmt->execute();
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($user && $user['password'] === md5($password)) {
+if ($user && password_verify($password, $user['password'])) {
     // ログイン成功
     $response = [
         'success' => true,
         'message' => 'ログイン成功！',
-        'name' => $user['name'] // nameカラムを追加
+        'name' => $user['name']
     ];
 } else {
     // ログイン失敗

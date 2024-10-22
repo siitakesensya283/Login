@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'; // Vuexのゲッターをインポート
+import { mapGetters } from 'vuex';
 
 export default {
   computed: {

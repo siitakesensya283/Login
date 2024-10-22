@@ -18,7 +18,7 @@
 
 <script>
 import axios from "axios";
-import { mapMutations } from "vuex"; // Vuexのミューテーションをインポート
+import { mapMutations } from "vuex";
 
 export default {
     data() {
@@ -29,7 +29,7 @@ export default {
         };
     },
     methods: {
-        ...mapMutations(["setUserName"]), // Vuexのミューテーションをマッピング
+        ...mapMutations(["setUserName"]),
 
         async login() {
             try {
@@ -45,8 +45,6 @@ export default {
                     // ログイン成功
                     this.$router.push("/dashboard"); // ダッシュボードへリダイレクト
                     this.setUserName(response.data.name); // ユーザー名をVuexストアに保存
-                    //alert(response.data.message); // ログイン成功メッセージを表示
-
                 } else {
                     // ログイン失敗
                     this.error = response.data.message;
