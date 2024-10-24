@@ -2,7 +2,7 @@
     <div class="content">
         <form @submit.prevent="login">
             <div>
-                <label for="userId">ユーザID (8桁の英数字)</label>
+                <label for="userId">ユーザID</label>
                 <input type="text" v-model="userId" maxlength="8" required />
             </div>
             <div>

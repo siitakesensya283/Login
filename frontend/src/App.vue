@@ -38,4 +38,5 @@ const logout = () => {    // ログアウト処理
   </div>
   <img src="https://key.visualarts.gr.jp/diary/entrypict/20190123_keyblog_01.jpg" class="img">
   <img src="https://key.visualarts.gr.jp/wp-content/uploads/2024/04/keyblog20240417_1b.jpg" class="img">
+  <img src="https://9-nine-project.com/wp/wp-content/themes/nine-project/assets/images/common/common/img_keyvisual.jpg" class="img">
 </template>
