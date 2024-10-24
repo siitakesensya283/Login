@@ -33,8 +33,9 @@ const logout = () => {    // ログアウト処理
       <router-view />
     </div>
     <footer class="footer">
-      <p>&copy; 2024 あなたのアプリケーション</p>
+      <p>&copy;&#x1FAF5;&#x1F42F;</p>
     </footer>
   </div>
   <img src="https://key.visualarts.gr.jp/diary/entrypict/20190123_keyblog_01.jpg" class="img">
+  <img src="https://key.visualarts.gr.jp/wp-content/uploads/2024/04/keyblog20240417_1b.jpg" class="img">
 </template>
