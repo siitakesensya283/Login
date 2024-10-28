@@ -54,4 +54,21 @@ if ($user && password_verify($password, $user['password'])) {
 // JSONレスポンスを返す
 header('Content-Type: application/json');
 echo json_encode($response);
+
+// タイムラインを取得するエンドポイント
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['userId'])) {
+    $userId = $_GET['userId'];
+
+    // タイムラインデータを取得
+    $stmt = $pdo->prepare("SELECT * FROM timeline WHERE userId = :userId ORDER BY created_at ASC");
+    $stmt->bindParam(':userId', $userId);
+    $stmt->execute();
+    $timeline = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // JSONレスポンスを返す
+    header('Content-Type: application/json');
+    echo json_encode($timeline);
+    exit();
+}
+
 ?>
