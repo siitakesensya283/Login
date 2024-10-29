@@ -30,6 +30,7 @@ export default {
     },
     methods: {
         ...mapMutations(["setUserName"]),
+        ...mapMutations(["setTime"]),
 
         async login() {
             try {
@@ -45,6 +46,7 @@ export default {
                     // ログイン成功
                     this.$router.push("/dashboard"); // ダッシュボードへリダイレクト
                     this.setUserName(response.data.name); // ユーザー名をVuexストアに保存
+                    this.setTime(response.data.time);
                 } else {
                     // ログイン失敗
                     this.error = response.data.message;

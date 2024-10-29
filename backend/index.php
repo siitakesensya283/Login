@@ -36,12 +36,18 @@ $stmt->bindParam(':userId', $userId);
 $stmt->execute();
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+$stmt = $pdo->prepare("SELECT created_at FROM timeline WHERE text = ''AND userId = :userId AND flg = 1");
+$stmt->bindParam(':userId', $userId);
+$stmt->execute();
+$timeline = $stmt->fetch(PDO::FETCH_ASSOC);
+
 if ($user && password_verify($password, $user['password'])) {
     // ログイン成功
     $response = [
         'success' => true,
         'message' => 'ログイン成功！',
-        'name' => $user['name']
+        'name' => $user['name'],
+        'time' => $timeline['created_at']
     ];
 } else {
     // ログイン失敗
@@ -54,21 +60,5 @@ if ($user && password_verify($password, $user['password'])) {
 // JSONレスポンスを返す
 header('Content-Type: application/json');
 echo json_encode($response);
-
-// タイムラインを取得するエンドポイント
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['userId'])) {
-    $userId = $_GET['userId'];
-
-    // タイムラインデータを取得
-    $stmt = $pdo->prepare("SELECT * FROM timeline WHERE userId = :userId ORDER BY created_at ASC");
-    $stmt->bindParam(':userId', $userId);
-    $stmt->execute();
-    $timeline = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // JSONレスポンスを返す
-    header('Content-Type: application/json');
-    echo json_encode($timeline);
-    exit();
-}
 
 ?>
