@@ -36,19 +36,59 @@ $stmt->bindParam(':userId', $userId);
 $stmt->execute();
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$stmt = $pdo->prepare("SELECT created_at FROM timeline WHERE text = ''AND userId = :userId AND flg = 1");
-$stmt->bindParam(':userId', $userId);
-$stmt->execute();
-$timeline = $stmt->fetch(PDO::FETCH_ASSOC);
-
+// ユーザーが存在するかを確認し、パスワードを検証
 if ($user && password_verify($password, $user['password'])) {
-    // ログイン成功
-    $response = [
-        'success' => true,
-        'message' => 'ログイン成功！',
-        'name' => $user['name'],
-        'time' => $timeline['created_at']
-    ];
+
+    // タイムラインのデータを取得（複数レコード対応）
+    $stmt = $pdo->prepare("SELECT created_at FROM timeline WHERE text = '' AND userId = :userId AND flg = 1");
+    $stmt->bindParam(':userId', $userId);
+
+    if ($stmt->execute()) {
+        // クエリが成功した場合
+        $timeline = $stmt->fetchAll(PDO::FETCH_COLUMN);  // 複数の `created_at` 値を配列で取得
+
+        if (!empty($timeline)) {
+
+            $stmt = $pdo->prepare("SELECT id FROM timeline WHERE text = '' AND userId = :userId AND flg = 1");
+            $stmt->bindParam('userId', $userId);
+            if ($stmt->execute()) {
+                $timeId = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                if (!empty($timeId)) {
+                    $response = [
+                        'success' => true,
+                        'message' => 'ログイン成功！',
+                        'name' => $user['name'],
+                        'timeline' => $timeline, // 配列としてレスポンスに含める
+                        'timeId' => $timeId
+                    ];
+                } else {
+                    $response = [
+                        'success' => true,
+                        'message' => 'ログイン成功！',
+                        'name' => $user['name'],
+                        'timeline' => $timeline, // 配列としてレスポンスに含める
+                        'timeId' => []
+                    ];
+                }
+            }
+        } else {
+            // データが空の場合
+            $response = [
+                'success' => true,
+                'message' => 'ログイン成功！',
+                'name' => $user['name'],
+                'timeline' => []  // 空配列として返す
+            ];
+        }
+    } else {
+        // クエリの実行に失敗した場合
+        $response = [
+            'success' => false,
+            'message' => 'タイムラインデータの取得に失敗しました。',
+            'error' => $stmt->errorInfo()
+        ];
+    }
+
 } else {
     // ログイン失敗
     $response = [
@@ -60,5 +100,4 @@ if ($user && password_verify($password, $user['password'])) {
 // JSONレスポンスを返す
 header('Content-Type: application/json');
 echo json_encode($response);
-
 ?>
