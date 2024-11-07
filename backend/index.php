@@ -40,12 +40,11 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 if ($user && password_verify($password, $user['password'])) {
 
     // タイムラインのデータを取得（複数レコード対応）
-    $stmt = $pdo->prepare("SELECT created_at FROM timeline WHERE text = '' AND userId = :userId AND flg = 1");
-    $stmt->bindParam(':userId', $userId);
+    $stmt = $pdo->prepare("SELECT time FROM CAN WHERE ign='IGN-ON'");
 
     if ($stmt->execute()) {
         // クエリが成功した場合
-        $timeline = $stmt->fetchAll(PDO::FETCH_COLUMN);  // 複数の `created_at` 値を配列で取得
+        $timeline = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         if (!empty($timeline)) {
 
