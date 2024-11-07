@@ -17,68 +17,54 @@
             </option>
           </select>
         </div>
-
       </section>
     </main>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex';
-import '@/assets/style.css';
-import { map } from 'core-js/core/array';
+import { mapGetters, mapMutations } from "vuex";
+import "@/assets/style.css";
+import axios from "axios";
 
 export default {
-  data(){
-    selectedIndex=null;
-    timeId=null;
-    nextId=null;
+  data() {
+    return {
+      selectedIndex: null,
+      items: ["アクティビティ1", "アクティビティ2", "アクティビティ3"], // 任意の例
+      error: null, // エラーメッセージ用
+    };
   },
   computed: {
-    ...mapGetters(['userName']), // Vuexのゲッターを使用してユーザー名を取得
-    ...mapGetters(['timeline']),//多分この辺で終わってる...多分新しいページも作る...store足さなきゃかも
-    ...mapGetters(['timeId']),
+    ...mapGetters(["userName", "timeline", "timeId"]),
   },
   methods: {
-    ...mapMutations(["setUserName"]),
-    ...mapMutations(["setTimeId"]),
-    ...mapMutations(["setNextId"]),
+    ...mapMutations(["setUserName", "setTimeId", "setNextId"]),
 
     async event(event) {
-
+      // セレクトボックスから選択されたインデックスを取得
       this.selectedIndex = event.target.value;
-      this.timeId=timeId[selectedIndex];
-      this.nextId=timeId[selectedIndex+1];
+      this.timeId = this.timeId ? this.timeId[this.selectedIndex] : null;
+      const nextId = this.timeId ? this.timeId[this.selectedIndex + 1] : null;
+
       try {
         const response = await axios.post(
           "https://2024isc1231028.weblike.jp/login/backend/event.php",
           {
             userId: this.userId,
             timeId: this.timeId,
-            nextId: this.nextid,
+            nextId: nextId,
           }
         );
 
-        this.$router.push("/"); // ダッシュボードへリダイレクト
-          this.setUserId(response.data.userId); // ユーザー名をVuexストアに保存
-          this.setTimeId(response.data.timeId);
-          this.setTimeId(response.data.timeId);
-
-        /*if (response.data.success) {
-          // ログイン成功
-          this.$router.push("/dashboard"); // ダッシュボードへリダイレクト
-          this.setUserName(response.data.name); // ユーザー名をVuexストアに保存
-          this.setTimeline(response.data.timeline);
-          this.setTimeId(response.data.timeId);
-        } else {
-          // ログイン失敗
-          this.error = response.data.message;
-        }
-          */
+        // リクエスト成功時の処理
+        this.setUserName(response.data.name);
+        this.setTimeId(response.data.timeId);
+        this.$router.push("/dashboard"); // ダッシュボードへリダイレクト
       } catch (error) {
-        this.error = "エラーが発生しました。";
+        this.error = "エラーが発生しました。"; // エラー発生時の処理
       }
     },
   },
-}
+};
 </script>
