@@ -12,6 +12,8 @@ const pageTitle = computed(() => {
       return 'ダッシュボード';
     case 'Login':
       return 'ログイン';
+    case 'Result':
+      return 'リザルト'
     default:
       return 'エラー';
   }

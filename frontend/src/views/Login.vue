@@ -29,9 +29,7 @@ export default {
         };
     },
     methods: {
-        ...mapMutations(["setUserName"]),
-        ...mapMutations(["setTimeline"]),
-        ...mapMutations(["setTimeId"]),
+        ...mapMutations(["setUserName","setTimeline"]),
 
         async login() {
             try {
@@ -44,13 +42,10 @@ export default {
                 );
 
                 if (response.data.success) {
-                    // ログイン成功
-                    this.$router.push("/dashboard"); // ダッシュボードへリダイレクト
-                    this.setUserName(response.data.name); // ユーザー名をVuexストアに保存
+                    this.$router.push("/dashboard");
+                    this.setUserName(response.data.name);
                     this.setTimeline(response.data.timeline);
-                    this.setTimeId(response.data.timeId);
                 } else {
-                    // ログイン失敗
                     this.error = response.data.message;
                 }
             } catch (error) {

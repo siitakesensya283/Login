@@ -3,16 +3,11 @@
     <main class="dashboard-content">
       <p v-if="userName">ようこそ、{{ userName }}さん！</p>
       <p v-else>ユーザー名が見つかりません。</p>
-
       <section class="user-section">
-        <h2>最近のアクティビティ</h2>
-        <p>ここに最新の活動情報が表示されます。</p>
-        <p v-if="timeline">{{ timeline }}</p>
-        <p v-else>タイムラインが見つかりません</p>
-
         <div>
-          <select @change="event">
-            <option v-for="item in formattedTimeline" :key="item">
+          <select @change="disFormat" class="dashboard-select">
+            <option selected disabled>時間を選択してください</option>
+            <option v-for="(item, index) in formattedTimeline" :key="index" :value="index">
               {{ item }}
             </option>
           </select>
@@ -30,9 +25,7 @@ import axios from "axios";
 export default {
   data() {
     return {
-      selectedIndex: null,
-      items: this.timeline, // 任意の例
-      error: null, // エラーメッセージ用
+      selectedSession: null,
     };
   },
   computed: {
@@ -44,26 +37,42 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["setUserName"]),
-    /*async event(event) {
-      // セレクトボックスから選択されたインデックスを取得
-      this.selectedIndex = event.target.value;
-      try {
-        const response = await axios.post(
-          "https://2024isc1231028.weblike.jp/login/backend/event.php",
-          {
-            userId: this.userId,
-          }
-        );
-        // リクエスト成功時の処理
-        this.setUserName(response.data.name);
-        this.setTimeId(response.data.timeId);
-        this.$router.push("/dashboard"); // ダッシュボードへリダイレクト
-      } catch (error) {
-        this.error = "エラーが発生しました。"; // エラー発生時の処理
+    ...mapMutations(["setSessionTimeline","setSessionVehiclespped"]),
+    disFormat(event) {
+      this.selectedIndex = parseInt(event.target.value, 10);
+      if (this.selectedIndex >= 0) {
+        this.event();
       }
-    },*/
+    },
+    async event() {
+      try {
+        if (this.selectedIndex !== null) {
+          const selectedSession = this.timeline[this.selectedIndex];
+          //
+          console.log(selectedSession);
+          //
+          const response = await axios.post(
+            'https://2024isc1231028.weblike.jp/login/backend/event.php',
+            {
+              selectedSession,
+            }
+          );
+          if (response.data.success) {
+            this.$router.push("/result");
+            this.setSessionTimeline(response.data.sessionTimeline);
+            this.setSessionVehiclespped(response.data.sessionVehiclespeed);
+            //
+            console.log(response.data.sessionTimeline);
+            console.log(response.data.sessionVehiclespeed);
+            //
+          } else {
+            this.error = response.data.message;
+          }
+        }
+      } catch (error) {
+        this.error = "エラーが発生しました。";
+      }
+    },
   },
 };
-
 </script>

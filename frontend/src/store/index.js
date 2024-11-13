@@ -5,9 +5,8 @@ const store = createStore({
         userName: localStorage.getItem("userName") || "", // ローカルストレージからユーザー名を復元
         userId: localStorage.getItem("userId") || "", // ユーザーIDを追加
         timeline: localStorage.getItem("timeline") || "",
-        timeId: localStorage.getItem("timeId") || "",
-        event: localStorage.getItem("event") || "",
-        huwahuwaTime: localStorage.getItem("huwahuwaTime") || "",
+        sessionTimeline: localStorage.getItem("sessionTimeline") || "",
+        sessionVehiclespeed: localStorage.getItem("sessionVehiclespeed") || "",
     },
     mutations: {
         setUserName(state, name) {
@@ -22,17 +21,13 @@ const store = createStore({
             state.timeline = timeline;
             localStorage.setItem("timeline", timeline);
         },
-        setTimeId(state, timeId) {
-            state.timeId = timeId;
-            localStorage.setItem("timeId", timeId);
+        setSessionTimeline(state, sessionTimeline) {
+            state.sessionTimeline = sessionTimeline;
+            localStorage.setItem("sessionTimeline", sessionTimeline);
         },
-        setEvent(state, event) {
-            state.event = event;
-            localStorage.setItem("event", event);
-        },
-        setHuwahuwaTime(state, huwahuwaTime) {
-            state.huwahuwaTime = huwahuwaTime;
-            localStorage.setItem("huwahuwaTime", huwahuwaTime);
+        setSessionVehiclespeed(state, sessionVehiclespeed) {
+            state.sessionVehiclespeed = sessionVehiclespeed;
+            localStorage.setItem("sessionVehiclespeed", sessionVehiclespeed);
         },
     },
     actions: {
@@ -45,23 +40,19 @@ const store = createStore({
         setTimeline({ commit }, timeline) {
             commit("time", timeline);
         },
-        setTimeId({ commit }, timeId) {
-            commit("timeId", timeId);
+        setSessionTimeline({ commit }, sessionTimeline) {
+            commit("sessionTimeline", sessionTimeline);
         },
-        setEvent({ commit }, event) {
-            commit("event", event);
-        },
-        setHuwahuwaTime({ commit }, huwahuwaTime) {
-            commit("huwahuwaTime", huwahuwaTime);
+        setSessionVehiclespeed({ commit }, sessionVehiclespeed) {
+            commit("sessionVehiclespeed", sessionVehiclespeed);
         },
     },
     getters: {
         userName: (state) => state.userName, // ユーザー名を取得するゲッター
         userId: (state) => state.userId, // ユーザーIDを取得するゲッター
         timeline: (state) => state.timeline,
-        timeId: (state) => state.timeId,
-        event: (state) => state.event,
-        huwahuwaTime: (state) => state.huwahuwaTime,
+        sessionTimeline: (state) => state.sessionTimeline,
+        sessionVehiclespeed: (state) => state.sessionVehiclespeed,
     },
 });
 

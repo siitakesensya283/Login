@@ -12,14 +12,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password'])) {
-        // ログイン成功時にユーザー情報をレスポンスに含める
         echo json_encode([
             'success' => true,
-            'userId' => $user['id'],  // 追加: userIdを含める
-            'name' => $user['name']    // 追加: ユーザー名も含める（必要に応じて）
+            'userId' => $user['id'],
+            'name' => $user['name']
         ]);
     } else {
-        echo json_encode(['success' => false, 'message' => 'ユーザIDまたはパスワードが間違っています。']);
+        echo json_encode(['success' => false, 'message' => 'ユーザIDまた�?�パスワードが間違って�?ます�?']);
     }
 }
 ?>
