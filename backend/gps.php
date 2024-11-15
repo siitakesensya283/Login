@@ -22,25 +22,18 @@ try {
     die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
-$userId = $data['userId'];
-$password = $data['password'];
-
-$stmt = $pdo->prepare('SELECT * FROM users WHERE userId = :userId');
-$stmt->bindParam(':userId', $userId);
-$stmt->execute();
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if ($user && password_verify($password, $user['password'])) {
+$stmt = $pdo->prepare("SELECT longitude,latitude FROM GPS");
+if ($stmt->execute()) {
+    $gps = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $response=[
-        'success'=> true,
-        'message'=>'ログイン成功',
-        'name'=>$user['name']
+        'success'=>true,
+        'message'=>'gps取得成功',
+        'gps'=>$gps,
     ];
 } else {
     $response = [
         'success' => false,
-        'message' => 'ユーザIDまたはパスワードが間違っています。'
+        'message'=>'gps取得失敗',
     ];
 }
 

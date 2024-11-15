@@ -7,7 +7,7 @@
         <div>
           <select @change="disFormat" class="dashboard-select">
             <option selected disabled>時間を選択してください</option>
-            <option v-for="(item, index) in formattedTimeline" :key="index" :value="index">
+            <option v-for="(item, index) in formattedStartline" :key="index" :value="index">
               {{ item }}
             </option>
           </select>
@@ -25,46 +25,39 @@ import axios from "axios";
 export default {
   data() {
     return {
-      selectedSession: null,
+      selectedTime: null,
     };
   },
   computed: {
-    ...mapGetters(["userName", "timeline"]),
-    formattedTimeline() {
-      return this.timeline.map(timestamp => {
+    ...mapGetters(["userName", "startline"]),
+    formattedStartline() {
+      return this.startline.map(timestamp => {
         return timestamp.substring(0, 16);
       });
     }
   },
   methods: {
-    ...mapMutations(["setSessionTimeline","setSessionVehiclespped"]),
-    disFormat(event) {
+    ...mapMutations(["setGps", "setCanTimeline", "setCanSpeed"]),
+    async disFormat(event) {
       this.selectedIndex = parseInt(event.target.value, 10);
       if (this.selectedIndex >= 0) {
-        this.event();
+        await this.getGps();
       }
     },
-    async event() {
+    async getCan() {
       try {
         if (this.selectedIndex !== null) {
-          const selectedSession = this.timeline[this.selectedIndex];
-          //
-          console.log(selectedSession);
-          //
+          const selectedTime = this.startline[this.selectedIndex];
+          console.log(selectedTime);///
           const response = await axios.post(
-            'https://2024isc1231028.weblike.jp/login/backend/event.php',
+            'https://2024isc1231028.weblike.jp/login/backend/can.php',
             {
-              selectedSession,
+              selectedTime,
             }
           );
           if (response.data.success) {
-            this.$router.push("/result");
-            this.setSessionTimeline(response.data.sessionTimeline);
-            this.setSessionVehiclespped(response.data.sessionVehiclespeed);
-            //
-            console.log(response.data.sessionTimeline);
-            console.log(response.data.sessionVehiclespeed);
-            //
+            this.setCanTimeline(response.data.canTimeline);
+            this.setCanSpeed(response.data.canSpeed);
           } else {
             this.error = response.data.message;
           }
@@ -73,6 +66,27 @@ export default {
         this.error = "エラーが発生しました。";
       }
     },
+
+    async getGps() {
+      await this.getCan();
+      try {
+        const response = await axios.post(
+          'https://2024isc1231028.weblike.jp/login/backend/gps.php',
+          {
+
+          }
+        );
+        if (response.data.success) {
+          this.setGps(response.data.gps);
+          console.log(response.data.gps);///
+          this.$router.push("/result");
+        } else {
+          this.error = response.data.message;
+        }
+      } catch (error) {
+        this.error = "エラーが発生しました。"
+      }
+    }
   },
 };
 </script>

@@ -4,9 +4,10 @@ const store = createStore({
     state: {
         userName: localStorage.getItem("userName") || "", // ローカルストレージからユーザー名を復元
         userId: localStorage.getItem("userId") || "", // ユーザーIDを追加
-        timeline: localStorage.getItem("timeline") || "",
-        sessionTimeline: localStorage.getItem("sessionTimeline") || "",
-        sessionVehiclespeed: localStorage.getItem("sessionVehiclespeed") || "",
+        startline: localStorage.getItem("startline") || "",
+        gps: localStorage.getItem("gps") || "",
+        canTimeline: localStorage.getItem("canTimeline") || "",
+        canSpeed: localStorage.getItem("canSpeed") || "",
     },
     mutations: {
         setUserName(state, name) {
@@ -17,17 +18,21 @@ const store = createStore({
             state.userId = id; // ユーザーIDを設定するミューテーション
             localStorage.setItem("userId", id); // ユーザーIDをローカルストレージに保存
         },
-        setTimeline(state, timeline) {
-            state.timeline = timeline;
-            localStorage.setItem("timeline", timeline);
+        setStartline(state, startline) {
+            state.startline = startline;
+            localStorage.setItem("startline", startline);
         },
-        setSessionTimeline(state, sessionTimeline) {
-            state.sessionTimeline = sessionTimeline;
-            localStorage.setItem("sessionTimeline", sessionTimeline);
+        setGps(state, gps) {
+            state.gps = gps;
+            localStorage.setItem("gps", gps);
         },
-        setSessionVehiclespeed(state, sessionVehiclespeed) {
-            state.sessionVehiclespeed = sessionVehiclespeed;
-            localStorage.setItem("sessionVehiclespeed", sessionVehiclespeed);
+        setCanTimeline(state, canTimeline) {
+            state.canTimeline = canTimeline;
+            localStorage.setItem("canTimeline", canTimeline);
+        },
+        setCanSpeed(state, canSpeed) {
+            state.canSpeed = canSpeed;
+            localStorage.setItem("canSpeed", canSpeed);
         },
     },
     actions: {
@@ -37,22 +42,26 @@ const store = createStore({
         setUserId({ commit }, id) {
             commit("setUserId", id); // ユーザーIDを設定するアクション
         },
-        setTimeline({ commit }, timeline) {
-            commit("time", timeline);
+        setStartline({ commit }, startline) {
+            commit("setStartline", startline);
         },
-        setSessionTimeline({ commit }, sessionTimeline) {
-            commit("sessionTimeline", sessionTimeline);
+        setGps({ commit }, gps) {
+            commit("setGps", gps);
         },
-        setSessionVehiclespeed({ commit }, sessionVehiclespeed) {
-            commit("sessionVehiclespeed", sessionVehiclespeed);
+        setCanTimeline({ commit }, canTimeline) {
+            commit("setCanTimeline", canTimeline);
+        },
+        setCanSpeed({ commit }, canSpeed) {
+            commit("setCanSpeed", canSpeed);
         },
     },
     getters: {
         userName: (state) => state.userName, // ユーザー名を取得するゲッター
         userId: (state) => state.userId, // ユーザーIDを取得するゲッター
-        timeline: (state) => state.timeline,
-        sessionTimeline: (state) => state.sessionTimeline,
-        sessionVehiclespeed: (state) => state.sessionVehiclespeed,
+        startline: (state) => state.startline,
+        gps: (state) => state.gps,
+        canTimeline: (state) => state.canTimeline,
+        canSpeed: (state) => state.canSpeed,
     },
 });
 

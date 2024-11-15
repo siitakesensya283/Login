@@ -1,6 +1,6 @@
 <template>
     <div class="content">
-        <form @submit.prevent="login">
+        <form @submit.prevent="getStartline">
             <div>
                 <label for="userId">ユーザID</label>
                 <input type="text" v-model="userId" maxlength="8" required />
@@ -29,7 +29,7 @@ export default {
         };
     },
     methods: {
-        ...mapMutations(["setUserName","setTimeline"]),
+        ...mapMutations(["setUserName", "setStartline"]),
 
         async login() {
             try {
@@ -40,11 +40,28 @@ export default {
                         password: this.password,
                     }
                 );
-
                 if (response.data.success) {
-                    this.$router.push("/dashboard");
                     this.setUserName(response.data.name);
-                    this.setTimeline(response.data.timeline);
+                } else {
+                    this.error = response.data.message;
+                }
+            } catch (error) {
+                this.error = "エラーが発生しました。";
+            }
+        },
+
+        async getStartline() {
+            await this.login();
+            try {
+                const response = await axios.post(
+                    "https://2024isc1231028.weblike.jp/login/backend/startline.php",
+                    {
+
+                    }
+                );
+                if (response.data.success) {
+                    this.setStartline(response.data.startline);
+                    this.$router.push("/dashboard");
                 } else {
                     this.error = response.data.message;
                 }

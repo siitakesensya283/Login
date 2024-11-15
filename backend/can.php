@@ -19,24 +19,24 @@ try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;port=$port;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die(json_encode(['success' => false, 'message' => 'データベース接続に失敗しました。']));
+    die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
 
 $data = json_decode(file_get_contents('php://input'), true);
-$selectedSession = $data['selectedSession'];
+$selectedTime = $data['selectedTime'];
 
-$stmt = $pdo->prepare("WITH endSession AS ( SELECT * FROM CAN WHERE time > :selectedSession AND ign = 'IGN-OFF' ORDER BY time LIMIT 1) SELECT * FROM CAN WHERE time >= :selectedSession AND time <= (SELECT time FROM endSession) ORDER BY time");
-$stmt->bindParam('selectedSession',$selectedSession);
+$stmt = $pdo->prepare("WITH endTime AS ( SELECT * FROM CAN WHERE time > :selectedTime AND ign = 'IGN-OFF' ORDER BY time LIMIT 1) SELECT * FROM CAN WHERE time >= :selectedTime AND time <= (SELECT time FROM endTime) ORDER BY time");
+$stmt->bindParam('selectedTime',$selectedTime);
 if ($stmt->execute()) {
-    $sessionEvent = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $can = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $sessionTimeline = array_column($sessionEvent, 'time');
-    $sessionVehiclespeed = array_column($sessionEvent, 'VehicleSpeed');
+    $canTimeline = array_column($can, 'time');
+    $canSpeed = array_column($can, 'VehicleSpeed');
 
     $response = [
         'success' => true,
-        'sessionTimeline' => $sessionTimeline,
-        'sessionVehiclespeed' => $sessionVehiclespeed
+        'canTimeline' => $canTimeline,
+        'canSpeed' => $canSpeed
     ];
 } else {
     $response = [

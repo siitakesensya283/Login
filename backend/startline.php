@@ -10,9 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 $host = 'mysql309.phy.lolipop.lan';
-$dbname = 'LAA1593707-testlogin';
-$username = 'LAA1593707';
-$password = 'password';
+$dbname = 'LAA1593625-test';
+$username = 'LAA1593625';
+$password = 'testTEST';
 $port = '3306';
 
 try {
@@ -22,25 +22,18 @@ try {
     die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
-$userId = $data['userId'];
-$password = $data['password'];
-
-$stmt = $pdo->prepare('SELECT * FROM users WHERE userId = :userId');
-$stmt->bindParam(':userId', $userId);
-$stmt->execute();
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if ($user && password_verify($password, $user['password'])) {
+$stmt = $pdo->prepare("SELECT time FROM CAN3 WHERE ign='IGN-ON'");
+if ($stmt->execute()) {
+    $startline = $stmt->fetchAll(PDO::FETCH_COLUMN);
     $response=[
-        'success'=> true,
-        'message'=>'ログイン成功',
-        'name'=>$user['name']
+        'success'=>true,
+        'message'=>'startline取得成功',
+        'startline'=>$startline,
     ];
 } else {
     $response = [
         'success' => false,
-        'message' => 'ユーザIDまたはパスワードが間違っています。'
+        'message'=>'startline取得失敗',
     ];
 }
 
