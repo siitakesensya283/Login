@@ -6,7 +6,7 @@ const store = createStore({
         userId: localStorage.getItem("userId") || "", // ユーザーIDを追加
         startline: localStorage.getItem("startline") || "",
         gps: localStorage.getItem("gps") || "",
-        canTimeline: localStorage.getItem("canTimeline") || "",
+        can: localStorage.getItem("can") || "",
         canSpeed: localStorage.getItem("canSpeed") || "",
     },
     mutations: {
@@ -26,14 +26,14 @@ const store = createStore({
             state.gps = gps;
             localStorage.setItem("gps", gps);
         },
-        setCanTimeline(state, canTimeline) {
-            state.canTimeline = canTimeline;
-            localStorage.setItem("canTimeline", canTimeline);
+        setCan(state, can) {
+            state.can = can;
+            localStorage.setItem("can", can);
         },
         setCanSpeed(state, canSpeed) {
             state.canSpeed = canSpeed;
             localStorage.setItem("canSpeed", canSpeed);
-        },
+        }
     },
     actions: {
         setUserName({ commit }, name) {
@@ -48,19 +48,19 @@ const store = createStore({
         setGps({ commit }, gps) {
             commit("setGps", gps);
         },
-        setCanTimeline({ commit }, canTimeline) {
-            commit("setCanTimeline", canTimeline);
+        setCan({ commit }, can) {
+            commit("setCan", can);
         },
         setCanSpeed({ commit }, canSpeed) {
             commit("setCanSpeed", canSpeed);
-        },
+        }
     },
     getters: {
         userName: (state) => state.userName, // ユーザー名を取得するゲッター
         userId: (state) => state.userId, // ユーザーIDを取得するゲッター
         startline: (state) => state.startline,
         gps: (state) => state.gps,
-        canTimeline: (state) => state.canTimeline,
+        can: (state) => state.can,
         canSpeed: (state) => state.canSpeed,
     },
 });

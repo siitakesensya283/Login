@@ -10,9 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 $host = 'mysql309.phy.lolipop.lan';
-$dbname = 'LAA1593625-test';
-$username = 'LAA1593625';
-$password = 'testTEST';
+$dbname = 'LAA1593707-testlogin';
+$username = 'LAA1593707';
+$password = 'password';
 $port = '3306';
 
 try {
@@ -35,6 +35,7 @@ if ($stmt->execute()) {
 
     $response = [
         'success' => true,
+        'can'=>$can,
         'canTimeline' => $canTimeline,
         'canSpeed' => $canSpeed
     ];

@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 header("Access-Control-Allow-Origin: http://2024isc1231028.weblike.jp");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
@@ -22,7 +25,13 @@ try {
     die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
 
-$stmt = $pdo->prepare("SELECT longitude,latitude FROM GPS");
+$data = json_decode(file_get_contents('php://input'), true);
+$startTime=$data['startTime'];
+$endTime=$data['endTime'];
+
+$stmt = $pdo->prepare("SELECT * FROM GPS WHERE time >= (SELECT time FROM GPS ORDER BY ABS(TIMESTAMPDIFF(SECOND, time, :startTime)) ASC LIMIT 1)AND time <= (SELECT time FROM GPS ORDER BY ABS(TIMESTAMPDIFF(SECOND, time, :endTime)) ASC LIMIT 1)");
+$stmt->bindParam(':startTime', $startTime);
+$stmt->bindParam(':endTime', $endTime);
 if ($stmt->execute()) {
     $gps = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $response=[

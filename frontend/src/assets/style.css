@@ -89,7 +89,6 @@ form {
     color: #333;
     cursor: pointer;
     appearance: none;
-    /* クロームやSafariでのデフォルトのプルダウン矢印を消す */
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -97,7 +96,6 @@ form {
     border-color: #3498db;
     box-shadow: 0 0 10px rgba(52, 152, 219, 0.2);
     outline: none;
-    /* フォーカス時のデフォルトのアウトラインを削除 */
 }
 
 .dashboard-select option {
@@ -107,7 +105,6 @@ form {
 
 .dashboard-select option:disabled {
     color: #aaa;
-    /* デフォルトの選択肢の色 */
     background-color: #f9f9f9;
 }
 
@@ -116,12 +113,10 @@ form {
     color: white;
 }
 
-/* プルダウンメニューの矢印アイコン */
 .dashboard-select::-ms-expand {
     display: none;
 }
 
-/* プルダウンメニューのスタイルが一貫してモダンになるように調整 */
 .dashboard-select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -140,38 +135,26 @@ form {
     font-size: 18px;
 }
 
-/* タイムラインのコンテナ */
-
-
-
-.img {
+#map {
     width: 100%;
-    height: auto;
-    object-fit: cover;
+    height: 500px;
 }
 
-/* 繧ｹ繝槭?ｼ繝医ヵ繧ｩ繝ｳ蜷代￠縺ｮ繝｡繝?繧｣繧｢繧ｯ繧ｨ繝ｪ */
 @media (max-width: 600px) {
     .header {
         flex-direction: column;
-        /* 繝倥ャ繝繝ｼ蜀?縺ｮ隕∫ｴ?繧堤ｸｦ縺ｫ荳ｦ縺ｹ繧? */
         align-items: flex-start;
-        /* 蟾ｦ謠?縺医↓縺吶ｋ */
         height: auto;
-        /* 鬮倥＆繧定?ｪ蜍戊ｪｿ謨ｴ */
     }
 
     .header h1 {
         font-size: 20px;
         margin-bottom: 10px;
-        /* 繧ｿ繧､繝医Ν縺ｨ繝懊ち繝ｳ縺ｮ髢薙↓菴咏區繧定ｿｽ蜉? */
     }
 
     .header button {
         width: 100%;
-        /* 繝懊ち繝ｳ繧貞?ｨ蟷?縺ｫ險ｭ螳? */
         padding: 10px 0;
-        /* 繝懊ち繝ｳ縺ｮ繝代ョ繧｣繝ｳ繧ｰ繧剃ｸ贋ｸ九↓隱ｿ謨ｴ */
         font-size: 16px;
     }
 

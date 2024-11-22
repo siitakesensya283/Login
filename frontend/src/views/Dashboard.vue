@@ -26,6 +26,8 @@ export default {
   data() {
     return {
       selectedTime: null,
+      endTime: null,
+      can: []
     };
   },
   computed: {
@@ -37,27 +39,31 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["setGps", "setCanTimeline", "setCanSpeed"]),
+    ...mapMutations(["setGps", "setCanSpeed", "setCan"]),
+
     async disFormat(event) {
       this.selectedIndex = parseInt(event.target.value, 10);
       if (this.selectedIndex >= 0) {
+        await this.getCan();
+        await this.getEndTime();
+        await this.speedFormat();
         await this.getGps();
       }
     },
+
     async getCan() {
       try {
         if (this.selectedIndex !== null) {
-          const selectedTime = this.startline[this.selectedIndex];
-          console.log(selectedTime);///
+          this.selectedTime = this.startline[this.selectedIndex];
           const response = await axios.post(
             'https://2024isc1231028.weblike.jp/login/backend/can.php',
             {
-              selectedTime,
+              selectedTime: this.selectedTime,
             }
           );
           if (response.data.success) {
-            this.setCanTimeline(response.data.canTimeline);
-            this.setCanSpeed(response.data.canSpeed);
+            this.can = response.data.can;
+            this.setCan(response.data.can);
           } else {
             this.error = response.data.message;
           }
@@ -67,18 +73,32 @@ export default {
       }
     },
 
+    async getEndTime() {
+      const lastIndex = this.can.length - 1;
+      const endTime = this.can[lastIndex].time;
+      this.endTime = endTime;
+    },
+
+    async speedFormat() {
+      const canSpeed = this.can.map(({ id, ign, VehicleSpeed, time }) => {
+        const flg = VehicleSpeed <= 25 ? 0 :
+          VehicleSpeed <= 30 ? 1 : 2;
+        return [id, ign, VehicleSpeed, time, flg];
+      });
+      this.setCanSpeed(canSpeed);
+    },
+
     async getGps() {
-      await this.getCan();
       try {
         const response = await axios.post(
           'https://2024isc1231028.weblike.jp/login/backend/gps.php',
           {
-
+            startTime: this.selectedTime,
+            endTime: this.endTime
           }
         );
         if (response.data.success) {
           this.setGps(response.data.gps);
-          console.log(response.data.gps);///
           this.$router.push("/result");
         } else {
           this.error = response.data.message;

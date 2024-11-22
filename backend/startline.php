@@ -10,9 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 $host = 'mysql309.phy.lolipop.lan';
-$dbname = 'LAA1593625-test';
-$username = 'LAA1593625';
-$password = 'testTEST';
+$dbname = 'LAA1593707-testlogin';
+$username = 'LAA1593707';
+$password = 'password';
 $port = '3306';
 
 try {
@@ -22,7 +22,7 @@ try {
     die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
 
-$stmt = $pdo->prepare("SELECT time FROM CAN3 WHERE ign='IGN-ON'");
+$stmt = $pdo->prepare("SELECT time FROM CAN WHERE ign='IGN-ON'");
 if ($stmt->execute()) {
     $startline = $stmt->fetchAll(PDO::FETCH_COLUMN);
     $response=[
