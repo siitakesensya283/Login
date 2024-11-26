@@ -2,11 +2,20 @@
     box-sizing: border-box;
 }
 
+body,
+html {
+    margin: 0;
+    padding: 0.05%;
+    height: 99.9%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
 .common {
     font-family: "Arial", sans-serif;
     background-color: #f0f4f8;
     color: #333;
-    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -140,36 +149,3 @@ form {
     height: 500px;
 }
 
-@media (max-width: 600px) {
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
-        height: auto;
-    }
-
-    .header h1 {
-        font-size: 20px;
-        margin-bottom: 10px;
-    }
-
-    .header button {
-        width: 100%;
-        padding: 10px 0;
-        font-size: 16px;
-    }
-
-    form {
-        padding: 20px;
-    }
-
-    .dashboard-content,
-    .user-section {
-        padding: 15px;
-    }
-
-    .img {
-        width: 100%;
-        height: auto;
-        object-fit: cover;
-    }
-}

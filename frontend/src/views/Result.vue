@@ -124,7 +124,7 @@ export default {
         markerElement.style.cursor = 'pointer';
 
         if (index == 0 || (index == this.formatGps.length - 1) || (gpsPoint.flg - this.formatGps[index - 1].flg) > 0) {
-        //最初と最後、速度超過した座標の添え字で条件分け
+          //最初と最後、速度超過した座標の添え字で条件分け
           const popup = new mapboxgl.Popup({//popupを定義(ホバーでmessageを表示)
             closeButton: false,
             closeOnClick: false
@@ -135,11 +135,20 @@ export default {
             .setPopup(popup)//popupを設定
             .addTo(map);
 
+          let popupVisible=false;
+
           markerElement.addEventListener('mouseenter', () => {
             popup.addTo(map);
           });
           markerElement.addEventListener('mouseleave', () => {
             popup.remove();
+          });
+          markerElement.addEventListener('touchstart', () => {
+            if(popupVisible){
+              popup.remove();
+            }else{
+              popup.addTo(map);
+            }
           });
         }
 
