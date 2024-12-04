@@ -30,14 +30,9 @@ $stmt->bindParam('selectedTime',$selectedTime);
 if ($stmt->execute()) {
     $can = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $canTimeline = array_column($can, 'time');
-    $canSpeed = array_column($can, 'VehicleSpeed');
-
     $response = [
         'success' => true,
         'can'=>$can,
-        'canTimeline' => $canTimeline,
-        'canSpeed' => $canSpeed
     ];
 } else {
     $response = [

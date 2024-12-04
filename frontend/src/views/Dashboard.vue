@@ -39,14 +39,14 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["setGps", "setCanSpeed", "setCan"]),
+    ...mapMutations(["setGps", "setCanFlg", "setCan"]),
 
     async disFormat(event) {
       this.selectedIndex = parseInt(event.target.value, 10);
       if (this.selectedIndex >= 0) {
         await this.getCan();
         await this.getEndTime();
-        await this.speedFormat();
+        await this.canFormat();
         await this.getGps();
       }
     },
@@ -63,7 +63,6 @@ export default {
           );
           if (response.data.success) {
             this.can = response.data.can;
-            this.setCan(response.data.can);
           } else {
             this.error = response.data.message;
           }
@@ -79,13 +78,14 @@ export default {
       this.endTime = endTime;
     },
 
-    async speedFormat() {
-      const canSpeed = this.can.map(({ id, ign, VehicleSpeed, time }) => {
-        const flg = VehicleSpeed <= 25 ? 0 :
+    async canFormat() {
+      const canFlg = this.can.map(({ id, ign, VehicleSpeed, ldw, time }) => {
+        const sFlg = VehicleSpeed <= 25 ? 0 :
           VehicleSpeed <= 30 ? 1 : 2;
-        return [id, ign, VehicleSpeed, time, flg];
+        const lFlg = ldw == 1 ? 1 : 0;
+        return [id, ign, VehicleSpeed, ldw, time, sFlg, lFlg];
       });
-      this.setCanSpeed(canSpeed);
+      this.setCanFlg(canFlg);
     },
 
     async getGps() {

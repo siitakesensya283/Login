@@ -1,4 +1,7 @@
 <template>
+  <div id="content">
+    <h2>{{ formattedDate }}</h2>
+  </div>
   <div id="map"></div>
 </template>
 
@@ -16,7 +19,13 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['userName', 'gps', 'canSpeed']),
+    ...mapGetters(['userName', 'gps', 'canFlg']),
+    formattedDate() {
+      const rawDate = this.canFlg[0][4];
+      const date = new Date(rawDate);
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      return new Intl.DateTimeFormat('ja-JP', options).format(date);
+    }
   },
   mounted() {
     this.initializeMap();
@@ -32,10 +41,10 @@ export default {
       }));
       this.formatGps = formatGps;//formatGpsをdataに保存
 
-      this.canSpeed.forEach(canSpeedPoint => {
-        if (canSpeedPoint[4] !== 0) {//canSpeedPoint[4]=canSpeed.flg
-          const closet = this.getClosestGps(canSpeedPoint[3]);//closetは添え字//canSpeedPoint[3]=canSpeed.time
-          this.formatGps[closet].flg = canSpeedPoint[4];
+      this.canFlg.forEach(canFlgPoint => {
+        if (canFlgPoint[5] !== 0) {//canFlgPoint[5]=canFlg.sFlg
+          const closet = this.getClosestGps(canFlgPoint[4]);//closetは添え字//canFlgPoint[4]=canFlg.time
+          this.formatGps[closet].flg = canFlgPoint[5];
         }
       });
 
