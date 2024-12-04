@@ -9,11 +9,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
+$data = json_decode(file_get_contents('php://input'), true);
+$userId = $data['userId'];
+$selectedTime = $data['selectedTime'];
+
 $host = 'mysql309.phy.lolipop.lan';
-$dbname = 'LAA1593707-testlogin';
-$username = 'LAA1593707';
-$password = 'password';
+$dbname = 'LAA1593625-test';
+$username = 'LAA1593625';
+$password = 'testTEST';
 $port = '3306';
+
+if ($userId == "testuser") {
+    $host = 'mysql309.phy.lolipop.lan';
+    $dbname = 'LAA1593707-testlogin';
+    $username = 'LAA1593707';
+    $password = 'password';
+    $port = '3306';
+}
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;port=$port;charset=utf8", $username, $password);
@@ -22,17 +34,13 @@ try {
     die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
-$selectedTime = $data['selectedTime'];
-
-$stmt = $pdo->prepare("WITH endTime AS ( SELECT * FROM CAN WHERE time > :selectedTime AND ign = 'IGN-OFF' ORDER BY time LIMIT 1) SELECT * FROM CAN WHERE time >= :selectedTime AND time <= (SELECT time FROM endTime) ORDER BY time");
-$stmt->bindParam('selectedTime',$selectedTime);
+$stmt = $pdo->prepare("WITH endTime AS ( SELECT id,ign,VehicleSpeed,ldw,time FROM CAN WHERE time > :selectedTime AND ign = 'IGN-OFF' ORDER BY time LIMIT 1) SELECT id,ign,VehicleSpeed,ldw,time FROM CAN WHERE time >= :selectedTime AND time <= (SELECT time FROM endTime) ORDER BY time");
+$stmt->bindParam('selectedTime', $selectedTime);
 if ($stmt->execute()) {
     $can = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     $response = [
         'success' => true,
-        'can'=>$can,
+        'can' => $can,
     ];
 } else {
     $response = [

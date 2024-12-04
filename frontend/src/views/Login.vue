@@ -29,7 +29,7 @@ export default {
         };
     },
     methods: {
-        ...mapMutations(["setUserName", "setStartline"]),
+        ...mapMutations(["setUserId","setUserName", "setStartline"]),
 
         async login() {
             try {
@@ -41,6 +41,7 @@ export default {
                     }
                 );
                 if (response.data.success) {
+                    this.setUserId(this.userId);
                     this.setUserName(response.data.name);
                 } else {
                     this.error = response.data.message;
@@ -56,7 +57,7 @@ export default {
                 const response = await axios.post(
                     "https://2024isc1231028.weblike.jp/login/backend/startline.php",
                     {
-
+                        userId: this.userId,
                     }
                 );
                 if (response.data.success) {

@@ -195,8 +195,6 @@ export default {
         case 0://制限速度内
         if (gps.lFlg == 1) {
             return '#FF7EDD'
-          } else if (gps.gFlg == 1) {
-            return '#9D46D5'
           }else{
             return '#969696';
           }

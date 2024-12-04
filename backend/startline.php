@@ -9,11 +9,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
+$data = json_decode(file_get_contents('php://input'), true);
+$userId = $data['userId'];
+
 $host = 'mysql309.phy.lolipop.lan';
-$dbname = 'LAA1593707-testlogin';
-$username = 'LAA1593707';
-$password = 'password';
+$dbname = 'LAA1593625-test';
+$username = 'LAA1593625';
+$password = 'testTEST';
 $port = '3306';
+
+if ($userId == "testuser") {
+    $host = 'mysql309.phy.lolipop.lan';
+    $dbname = 'LAA1593707-testlogin';
+    $username = 'LAA1593707';
+    $password = 'password';
+    $port = '3306';
+}
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;port=$port;charset=utf8", $username, $password);

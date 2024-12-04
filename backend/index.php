@@ -9,11 +9,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
+$data = json_decode(file_get_contents('php://input'), true);
+$userId = $data['userId'];
+$password = $data['password'];
+
 $host = 'mysql309.phy.lolipop.lan';
-$dbname = 'LAA1593707-testlogin';
-$username = 'LAA1593707';
-$password = 'password';
+$dbname = 'LAA1593625-test';
+$username = 'LAA1593625';
+$password = 'testTEST';
 $port = '3306';
+
+if ($userId) {//($userId=='testuser')
+    $host = 'mysql309.phy.lolipop.lan';
+    $dbname = 'LAA1593707-testlogin';
+    $username = 'LAA1593707';
+    $password = 'password';
+    $port = '3306';
+}
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;port=$port;charset=utf8", $username, $password);
@@ -22,20 +34,16 @@ try {
     die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
-$userId = $data['userId'];
-$password = $data['password'];
-
 $stmt = $pdo->prepare('SELECT * FROM users WHERE userId = :userId');
 $stmt->bindParam(':userId', $userId);
 $stmt->execute();
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($user && password_verify($password, $user['password'])) {
-    $response=[
-        'success'=> true,
-        'message'=>'ログイン成功',
-        'name'=>$user['name']
+    $response = [
+        'success' => true,
+        'message' => 'ログイン成功',
+        'name' => $user['name']
     ];
 } else {
     $response = [

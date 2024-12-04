@@ -36,8 +36,9 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["userName", "startline"]),
+    ...mapGetters(["userId","userName", "startline"]),
     formattedStartline() {
+      console.log(this.startline);///DEBUG  !testuserでcan.timeがNULLになる？
       return this.startline.map(timestamp => {
         return timestamp.substring(0, 16);
       });
@@ -67,6 +68,7 @@ export default {
           const response = await axios.post(
             'https://2024isc1231028.weblike.jp/login/backend/can.php',
             {
+              userId: this.userId,
               selectedTime: this.selectedTime,
             }
           );
@@ -104,6 +106,7 @@ export default {
         const response = await axios.post(
           'https://2024isc1231028.weblike.jp/login/backend/gForce.php',
           {
+            userId: this.userId,
             startTime: this.selectedTime,
             endTime: this.endTime
           }
@@ -141,6 +144,7 @@ export default {
         const response = await axios.post(
           'https://2024isc1231028.weblike.jp/login/backend/gps.php',
           {
+            userId: this.userId,
             startTime: this.selectedTime,
             endTime: this.endTime
           }
@@ -195,15 +199,15 @@ export default {
     getMessage() {//イベントの内容を割り当て
       this.formatGps.forEach((formGps, index) => {
         if (index === 0) {
-          this.formatGps[index].message = '開始';
+          this.formatGps[index].message = '\n開始';
         }
         else if (index === this.formatGps.length - 1) {
-          this.formatGps[index].message = '終了';
+          this.formatGps[index].message = '\n終了';
         }
         else {
           if ((formGps.sFlg - this.formatGps[index - 1].sFlg) > 0) {//速度を超過
-            this.formatGps[index].message += (formGps.sFlg === 1) ? '軽度速度超過'
-              : (formGps.sFlg === 2) ? '重度速度超過'
+            this.formatGps[index].message += (formGps.sFlg === 1) ? '\n軽度速度超過'
+              : (formGps.sFlg === 2) ? '\n重度速度超過'
                 : '';
           }
           if (formGps.lFlg == 1) {
@@ -213,7 +217,7 @@ export default {
             this.formatGps[index].message += '\n強いGがかかかりました';
           }
         }
-        if (formGps.message != "") this.formatGps[index].message = this.formatGps[index].time+ '\n' + this.formatGps[index].message;
+        if (formGps.message != "") this.formatGps[index].message = this.formatGps[index].time + this.formatGps[index].message;
       });
     },
 
