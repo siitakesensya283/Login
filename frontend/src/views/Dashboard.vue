@@ -4,14 +4,12 @@
       <p v-if="userName">ようこそ、{{ userName }}さん！</p>
       <p v-else>ユーザー名が見つかりません。</p>
       <section class="user-section">
-        <div>
-          <select @change="disFormat" class="dashboard-select">
-            <option selected disabled>時間を選択してください</option>
-            <option v-for="(item, index) in formattedStartline" :key="index" :value="index">
-              {{ item }}
-            </option>
-          </select>
-        </div>
+        <select @change="disFormat" class="dashboard-select">
+          <option selected disabled>時間を選択してください</option>
+          <option v-for="(item, index) in formattedStartline" :key="index" :value="index">
+            {{ item }}
+          </option>
+        </select>
       </section>
     </main>
   </div>
@@ -36,7 +34,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["userId","userName", "startline"]),
+    ...mapGetters(["userId", "userName", "startline"]),
     formattedStartline() {
       console.log(this.startline);///DEBUG  !testuserでcan.timeがNULLになる？
       return this.startline.map(timestamp => {
@@ -169,9 +167,7 @@ export default {
         gFlg: 0,//gForce flg
         message: "",//イベント内容
       }));
-
       this.formatGps = formatGps;
-
       this.canFlg.forEach(canFlgPoint => {
         if (canFlgPoint[5] !== 0) {//canFlgPoint[5]=canFlg.sFlg
           const closet = this.getClosestGps(canFlgPoint[4]);//closetは添え字//canFlgPoint[4]=canFlg.time
@@ -182,14 +178,12 @@ export default {
           this.formatGps[closet].lFlg = 1;
         }
       })
-
       this.formatGForce.forEach(gForcePoint => {
         if (gForcePoint[4] == 1) {//gForcePoint[4]=formatGForce.Flg
           const closet = this.getClosestGps(gForcePoint[3]);//closetは添え字//gForcePoint[3]=formatGForce.time
           this.formatGps[closet].gFlg = 1;
         }
       });
-
       this.getMessage();
       this.setGps(formatGps);
       this.gps = [];

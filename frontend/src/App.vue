@@ -5,7 +5,6 @@ import '@/assets/style.css'
 
 const route = useRoute();
 const router =useRouter();
-
 const pageTitle = computed(() => {
   switch (route.name) {
     case 'Dashboard':

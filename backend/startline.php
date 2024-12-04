@@ -36,15 +36,15 @@ try {
 $stmt = $pdo->prepare("SELECT time FROM CAN WHERE ign='IGN-ON'");
 if ($stmt->execute()) {
     $startline = $stmt->fetchAll(PDO::FETCH_COLUMN);
-    $response=[
-        'success'=>true,
-        'message'=>'startline取得成功',
-        'startline'=>$startline,
+    $response = [
+        'success' => true,
+        'message' => 'startline取得成功',
+        'startline' => $startline,
     ];
 } else {
     $response = [
         'success' => false,
-        'message'=>'startline取得失敗',
+        'message' => 'startline取得失敗',
     ];
 }
 

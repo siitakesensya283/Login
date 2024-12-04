@@ -35,22 +35,18 @@ export default {
       let totalLongitude = 0;
       let totalLatitude = 0;
       const totalPoints = this.gps.length;
-
       this.gps.forEach(gpsPoint => {
         totalLongitude += gpsPoint.longitude;
         totalLatitude += gpsPoint.latitude;
       });
-
       const averageLongitude = totalLongitude / totalPoints;
       const averageLatitude = totalLatitude / totalPoints;
-
       return [averageLongitude, averageLatitude];
     },
 
     async initializeMap() {//最初に呼び出し
       const bounds = new mapboxgl.LngLatBounds();
       const center = this.calculateCenter();
-
       mapboxgl.accessToken = this.mapboxToken;
       const map = new mapboxgl.Map({
         container: 'map',
@@ -65,7 +61,6 @@ export default {
         touchZoomRotate: false,
         dragPan: false,
       });
-
       this.gps.forEach((gpsPoint, index) => {//gpsの各座標の設定
         const color = (index == 0 || index == this.gps.length - 1)//最初と最後の座標を#19FF29(黄緑)に設定
           ? '#19FF29'
@@ -76,28 +71,23 @@ export default {
               : (gpsPoint.gFlg - this.gps[index - 1].gFlg) == 1//強いG
                 ? '#9C45D4'
                 : '';
-
         const markerElement = document.createElement('div');//各座標に<div>を付与
         markerElement.style.width = '12px';
         markerElement.style.height = '12px';
         markerElement.style.backgroundColor = color;
         markerElement.style.borderRadius = '50%';
         markerElement.style.cursor = 'pointer';
-
         if (index == 0 || (index == this.gps.length - 1) || (gpsPoint.sFlg - this.gps[index - 1].sFlg) > 0 || (gpsPoint.lFlg - this.gps[index - 1].lFlg) == 1 || (gpsPoint.gFlg - this.gps[index - 1].gFlg) == 1) {
           //最初と最後、イベントで条件分け
           const popup = new mapboxgl.Popup({//popupを定義(ホバーでmessageを表示)
             closeButton: false,
             closeOnClick: false
           }).setText(gpsPoint.message);
-
           new mapboxgl.Marker(markerElement)//markerを設定
             .setLngLat([gpsPoint.longitude, gpsPoint.latitude])
             .setPopup(popup)//popupを設定
             .addTo(map);
-
           let popupVisible = false;
-
           markerElement.addEventListener('mouseenter', () => {
             popup.addTo(map);
           });
@@ -112,10 +102,8 @@ export default {
             }
           });
         }
-
         bounds.extend([gpsPoint.longitude, gpsPoint.latitude]);
       });
-
       map.fitBounds(bounds, { padding: 50 });
       map.setMaxBounds(bounds);
       this.connectMarkers(map);
@@ -137,15 +125,12 @@ export default {
     connectMarkers(map) {//各座標をつなぐ
       const lineSegments = [];
       const coordinates = [];
-
       this.gps.forEach((gpsPoint, index) => {
         coordinates.push([gpsPoint.longitude, gpsPoint.latitude]);
-
         if (index > 0) {//添え字が0以上なら一つ前の座標とつなぐ
           const previousPoint = this.gps[index - 1];
           const currentPoint = this.gps[index];
           const lineColor = this.getLineColor(previousPoint);
-
           lineSegments.push({
             type: 'Feature',
             geometry: {
@@ -162,7 +147,6 @@ export default {
           });
         }
       });
-
       map.on('load', () => {
         map.addSource('lineSegments', {
           type: 'geojson',
@@ -171,7 +155,6 @@ export default {
             features: lineSegments
           },
         });
-
         map.addLayer({
           id: 'lineSegmentsLayer',
           type: 'line',
@@ -193,9 +176,9 @@ export default {
     getLineColor(gps) {//lineの色をsFlgで変える
       switch (gps.sFlg) {
         case 0://制限速度内
-        if (gps.lFlg == 1) {
+          if (gps.lFlg == 1) {
             return '#FF7EDD'
-          }else{
+          } else {
             return '#969696';
           }
         case 1://制限速度+5まで

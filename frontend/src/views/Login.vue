@@ -2,7 +2,7 @@
     <div class="content">
         <form @submit.prevent="getStartline">
             <div>
-                <label for="userId">ユーザID</label>
+                <label for="userId">ユーザID(英数8字)</label>
                 <input type="text" v-model="userId" maxlength="8" required />
             </div>
             <div>
@@ -29,7 +29,7 @@ export default {
         };
     },
     methods: {
-        ...mapMutations(["setUserId","setUserName", "setStartline"]),
+        ...mapMutations(["setUserId", "setUserName", "setStartline"]),
 
         async login() {
             try {

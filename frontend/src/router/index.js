@@ -19,12 +19,11 @@ const router = createRouter({
         },
         {
             path: '/result',
-            name:'Result',
+            name: 'Result',
             component: Result
         }
     ]
 });
-
 
 router.beforeEach((to, from, next) => {
     const isAuthenticated = localStorage.getItem('token');
