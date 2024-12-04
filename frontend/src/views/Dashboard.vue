@@ -187,7 +187,7 @@ export default {
       this.getMessage();
       this.setGps(formatGps);
       this.gps = [];
-      console.log(this.formatGps);
+      console.log(this.formatGps);//DEBUG 完成したGPSを確認
     },
 
     getMessage() {//イベントの内容を割り当て
@@ -211,8 +211,16 @@ export default {
             this.formatGps[index].message += '\n強いGがかかかりました';
           }
         }
-        if (formGps.message != "") this.formatGps[index].message = this.formatGps[index].time + this.formatGps[index].message;
+        if (formGps.message != "") this.formatGps[index].message = this.formatDate(this.formatGps[index].time) + this.formatGps[index].message;
       });
+    },
+
+    formatDate(date) {
+      const formDate = new Date(date);
+      const hours = String(formDate.getHours()).padStart(2, '0');
+      const minutes = String(formDate.getMinutes()).padStart(2, '0');
+      const seconds = String(formDate.getSeconds()).padStart(2, '0');
+      return `${hours}時${minutes}分${seconds}秒`;
     },
 
     getClosestGps(time) {//一番近いtimeを持つformatGpsを探索し、添え字を返す

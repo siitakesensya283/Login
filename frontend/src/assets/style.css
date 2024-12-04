@@ -79,6 +79,15 @@ form {
     max-width: 400px;
 }
 
+.password-container {
+    display: flex;
+    align-items: center;
+}
+
+.password-container button {
+    margin-left: 8px;
+}
+
 .dashboard-content {
     background-color: white;
     padding: 20px;

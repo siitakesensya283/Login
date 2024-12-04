@@ -1,13 +1,16 @@
 <template>
     <div class="content">
-        <form @submit.prevent="getStartline">
+        <form @submit.prevent="login">
             <div>
                 <label for="userId">ユーザID(英数8字)</label>
                 <input type="text" v-model="userId" maxlength="8" required />
             </div>
             <div>
                 <label for="password">パスワード</label>
-                <input type="password" v-model="password" required />
+                <div class="password-container">
+                    <input :type="passVis ? 'text' : 'password'" v-model="password" required />
+                    <button type="button" @click="togglePassVis">{{ passVis ? '非表示' : '表示' }}</button>
+                </div>
             </div>
             <button type="submit">ログイン</button>
         </form>
@@ -26,10 +29,15 @@ export default {
             userId: "",
             password: "",
             error: "",
+            passVis: false,
         };
     },
     methods: {
         ...mapMutations(["setUserId", "setUserName", "setStartline"]),
+
+        togglePassVis() {
+            this.passVis = !this.passVis;
+        },
 
         async login() {
             try {
@@ -43,6 +51,11 @@ export default {
                 if (response.data.success) {
                     this.setUserId(this.userId);
                     this.setUserName(response.data.name);
+                    if (this.userId == 'admin001') {
+                        this.$router.push("/admin");
+                        return;
+                    }
+                    await this.getStartline();
                 } else {
                     this.error = response.data.message;
                 }
@@ -52,7 +65,6 @@ export default {
         },
 
         async getStartline() {
-            await this.login();
             try {
                 const response = await axios.post(
                     "https://2024isc1231028.weblike.jp/login/backend/startline.php",

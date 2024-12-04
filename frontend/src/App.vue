@@ -13,6 +13,8 @@ const pageTitle = computed(() => {
       return 'ログイン';
     case 'Result':
       return 'リザルト'
+    case 'Admin':
+      return '管理者ページ';
     default:
       return 'エラー';
   }
@@ -34,7 +36,7 @@ const logout = () => {    // ログアウト処理
       <router-view />
     </div>
     <footer class="footer">
-      <p>&copy;</p>
+      <p>&copy; 2024 96yuki.</p>
     </footer>
   </div>
 </template>

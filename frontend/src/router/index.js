@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Login from '@/views/Login.vue';
 import Dashboard from '@/views/Dashboard.vue';
 import Result from '@/views/Result.vue';
+import Admin from '@/views/Admin.vue';
 
 const router = createRouter({
     history: createWebHistory('/login/'),
@@ -21,6 +22,11 @@ const router = createRouter({
             path: '/result',
             name: 'Result',
             component: Result
+        },
+        {
+            path: '/admin',
+            name: 'Admin',
+            component: Admin,
         }
     ]
 });
