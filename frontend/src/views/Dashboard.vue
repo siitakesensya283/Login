@@ -27,7 +27,12 @@ export default {
     return {
       selectedTime: null,
       endTime: null,
-      can: []
+      can: [],
+      gps: [],
+      canFlg: [],
+      gForce: [],
+      formatGForce: [],
+      formatGps: [],
     };
   },
   computed: {
@@ -39,7 +44,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["setGps", "setCanFlg", "setCan"]),
+    ...mapMutations(["setGps", "setCan"]),
 
     async disFormat(event) {
       this.selectedIndex = parseInt(event.target.value, 10);
@@ -47,7 +52,11 @@ export default {
         await this.getCan();
         await this.getEndTime();
         await this.canFormat();
+        await this.getGForce();
+        await this.formattingGForce();
         await this.getGps();
+        await this.formattingGps();
+        this.$router.push("/result");
       }
     },
 
@@ -85,7 +94,46 @@ export default {
         const lFlg = ldw == 1 ? 1 : 0;
         return [id, ign, VehicleSpeed, ldw, time, sFlg, lFlg];
       });
-      this.setCanFlg(canFlg);
+      this.setCan(canFlg);
+      this.canFlg = canFlg;
+      this.can = [];
+    },
+
+    async getGForce() {
+      try {
+        const response = await axios.post(
+          'https://2024isc1231028.weblike.jp/login/backend/gForce.php',
+          {
+            startTime: this.selectedTime,
+            endTime: this.endTime
+          }
+        );
+        if (response.data.success) {
+          this.gForce = response.data.gForce;
+        } else {
+          this.error = response.data.message;
+        }
+      } catch (error) {
+        this.error = "エラーが発生しました。"
+      }
+    },
+
+    async formattingGForce() {
+      const xo = this.gForce[0].x;
+      const yo = this.gForce[0].y;
+      const zo = this.gForce[0].z;
+      let xDiff, yDiff, zDiff, gDiff = 0;
+      const formatGForce = this.gForce.map(({ x, y, z, time }) => {
+        xDiff = x - xo;
+        yDiff = y - yo;
+        zDiff = z - zo;
+        gDiff = Math.sqrt(xDiff ** 2 + yDiff ** 2 + zDiff ** 2);
+        const flg = gDiff >= 100 ? 1 : 0;
+        return [x, y, z, time, flg];
+      });
+      this.formatGForce = formatGForce;
+      //this.setGForce(this.formatGForce);
+      this.gForce = [];
     },
 
     async getGps() {
@@ -98,15 +146,89 @@ export default {
           }
         );
         if (response.data.success) {
-          this.setGps(response.data.gps);
-          this.$router.push("/result");
+          this.gps = response.data.gps;
         } else {
           this.error = response.data.message;
         }
       } catch (error) {
         this.error = "エラーが発生しました。"
       }
-    }
+    },
+
+    async formattingGps() {//イベント込みのgpsの作成
+      let formatGps = this.gps.map(gpsPoint => ({
+        longitude: gpsPoint.longitude,
+        latitude: gpsPoint.latitude,
+        time: gpsPoint.time,
+        sFlg: 0,//速度超過flg
+        lFlg: 0,//ldw flg
+        gFlg: 0,//gForce flg
+        message: "",//イベント内容
+      }));
+
+      this.formatGps = formatGps;
+
+      this.canFlg.forEach(canFlgPoint => {
+        if (canFlgPoint[5] !== 0) {//canFlgPoint[5]=canFlg.sFlg
+          const closet = this.getClosestGps(canFlgPoint[4]);//closetは添え字//canFlgPoint[4]=canFlg.time
+          this.formatGps[closet].sFlg = canFlgPoint[5];
+        }
+        if (canFlgPoint[6] == 1) {//canFlgPoint[6]=canFlg.lFlg
+          const closet = this.getClosestGps(canFlgPoint[4]);//closetは添え字//canFlgPoint[4]=canFlg.time
+          this.formatGps[closet].lFlg = 1;
+        }
+      })
+
+      this.formatGForce.forEach(gForcePoint => {
+        if (gForcePoint[4] == 1) {//gForcePoint[4]=formatGForce.Flg
+          const closet = this.getClosestGps(gForcePoint[3]);//closetは添え字//gForcePoint[3]=formatGForce.time
+          this.formatGps[closet].gFlg = 1;
+        }
+      });
+
+      this.getMessage();
+      this.setGps(formatGps);
+      this.gps = [];
+      console.log(this.formatGps);
+    },
+
+    getMessage() {//イベントの内容を割り当て
+      this.formatGps.forEach((formGps, index) => {
+        if (index === 0) {
+          this.formatGps[index].message = '開始';
+        }
+        else if (index === this.formatGps.length - 1) {
+          this.formatGps[index].message = '終了';
+        }
+        else {
+          if ((formGps.sFlg - this.formatGps[index - 1].sFlg) > 0) {//速度を超過
+            this.formatGps[index].message += (formGps.sFlg === 1) ? '軽度速度超過'
+              : (formGps.sFlg === 2) ? '重度速度超過'
+                : '';
+          }
+          if (formGps.lFlg == 1) {
+            this.formatGps[index].message += '\n車線逸脱';
+          }
+          if (formGps.gFlg == 1) {
+            this.formatGps[index].message += '\n強いGがかかかりました';
+          }
+        }
+        if (formGps.message != "") this.formatGps[index].message = this.formatGps[index].time+ '\n' + this.formatGps[index].message;
+      });
+    },
+
+    getClosestGps(time) {//一番近いtimeを持つformatGpsを探索し、添え字を返す
+      let minDiff = Math.abs(new Date(time) - new Date(this.formatGps[0].time));
+      let closet = 0;
+      for (let i = 1; i < this.formatGps.length; i++) {
+        const diff = Math.abs(new Date(time) - new Date(this.formatGps[i].time));//timeの差を取得し、比べる
+        if (diff < minDiff) {
+          minDiff = diff;
+          closet = i;
+        }
+      }
+      return closet;//添え字を返す
+    },
   },
 };
 </script>

@@ -7,7 +7,6 @@ const store = createStore({
         startline: localStorage.getItem("startline") || "",
         gps: localStorage.getItem("gps") || "",
         can: localStorage.getItem("can") || "",
-        canFlg: localStorage.getItem("canFlg") || "",
     },
     mutations: {
         setUserName(state, name) {
@@ -29,10 +28,6 @@ const store = createStore({
         setCan(state, can) {
             state.can = can;
             localStorage.setItem("can", can);
-        },
-        setCanFlg(state, canFlg) {
-            state.canFlg = canFlg;
-            localStorage.setItem("canFlg", canFlg);
         }
     },
     actions: {
@@ -50,9 +45,6 @@ const store = createStore({
         },
         setCan({ commit }, can) {
             commit("setCan", can);
-        },
-        setCanFlg({ commit }, canFlg) {
-            commit("setCanFlg", canFlg);
         }
     },
     getters: {
@@ -61,7 +53,6 @@ const store = createStore({
         startline: (state) => state.startline,
         gps: (state) => state.gps,
         can: (state) => state.can,
-        canFlg: (state) => state.canFlg,
     },
 });
 
