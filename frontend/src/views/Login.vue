@@ -5,13 +5,11 @@
                 <label for="userId">ユーザID(英数8字)</label>
                 <input type="text" v-model="userId" maxlength="8" required />
             </div>
-            <div>
-                <label for="password">パスワード</label>
                 <div class="password-container">
+                    <label for="password">パスワード</label>
                     <input :type="passVis ? 'text' : 'password'" v-model="password" required />
                     <button type="button" @click="togglePassVis">{{ passVis ? '非表示' : '表示' }}</button>
                 </div>
-            </div>
             <button type="submit">ログイン</button>
         </form>
         <p v-if="error">{{ error }}</p>

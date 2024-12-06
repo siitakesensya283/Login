@@ -33,7 +33,7 @@ try {
     die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
 
-$stmt = $pdo->prepare("SELECT time FROM CAN WHERE ign='IGN-ON'");
+$stmt = $pdo->prepare("SELECT timestamp AS time FROM CAN WHERE ign='IGN-ON'");
 if ($stmt->execute()) {
     $startline = $stmt->fetchAll(PDO::FETCH_COLUMN);
     $response = [

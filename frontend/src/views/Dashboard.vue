@@ -36,7 +36,6 @@ export default {
   computed: {
     ...mapGetters(["userId", "userName", "startline"]),
     formattedStartline() {
-      console.log(this.startline);///DEBUG  !testuserでcan.timeがNULLになる？
       return this.startline.map(timestamp => {
         return timestamp.substring(0, 16);
       });
@@ -187,7 +186,6 @@ export default {
       this.getMessage();
       this.setGps(formatGps);
       this.gps = [];
-      console.log(this.formatGps);//DEBUG 完成したGPSを確認
     },
 
     getMessage() {//イベントの内容を割り当て
