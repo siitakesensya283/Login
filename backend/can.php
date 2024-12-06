@@ -19,14 +19,6 @@ $username = 'LAA1593625';
 $password = 'testTEST';
 $port = '3306';
 
-if ($userId == "testuser") {
-    $host = 'mysql309.phy.lolipop.lan';
-    $dbname = 'LAA1593707-testlogin';
-    $username = 'LAA1593707';
-    $password = 'password';
-    $port = '3306';
-}
-
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;port=$port;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -34,7 +26,9 @@ try {
     die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
 
-$stmt = $pdo->prepare("WITH endTime AS (SELECT id, ign, VehicleSpeed, ldw, timestamp AS time FROM CAN WHERE timestamp > :selectedTime AND ign = 'IGN-OFF' ORDER BY timestamp LIMIT 1) SELECT id, ign, VehicleSpeed, ldw, timestamp AS time FROM CAN WHERE timestamp >= :selectedTime AND timestamp <= (SELECT time FROM endTime) ORDER BY timestamp");
+$sql="WITH endTime AS (SELECT id, ign, VehicleSpeed, ldw, timestamp AS time FROM CAN WHERE timestamp > :selectedTime AND ign = 'IGN-OFF' ORDER BY timestamp LIMIT 1) SELECT id, ign, VehicleSpeed, ldw, timestamp AS time FROM CAN WHERE timestamp >= :selectedTime AND timestamp <= (SELECT time FROM endTime) ORDER BY timestamp";
+if($userId=='testuser')$sql="WITH endTime AS (SELECT id, ign, VehicleSpeed, ldw, timestamp AS time FROM testCAN WHERE timestamp > :selectedTime AND ign = 'IGN-OFF' ORDER BY timestamp LIMIT 1) SELECT id, ign, VehicleSpeed, ldw, timestamp AS time FROM testCAN WHERE timestamp >= :selectedTime AND timestamp <= (SELECT time FROM endTime) ORDER BY timestamp";
+$stmt = $pdo->prepare($sql);
 $stmt->bindParam('selectedTime', $selectedTime);
 if ($stmt->execute()) {
     $can = $stmt->fetchAll(PDO::FETCH_ASSOC);

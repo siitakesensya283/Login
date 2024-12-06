@@ -20,22 +20,15 @@ $username = 'LAA1593625';
 $password = 'testTEST';
 $port = '3306';
 
-if ($userId == "testuser") {
-    $host = 'mysql309.phy.lolipop.lan';
-    $dbname = 'LAA1593707-testlogin';
-    $username = 'LAA1593707';
-    $password = 'password';
-    $port = '3306';
-}
-
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;port=$port;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
-
-$stmt = $pdo->prepare("SELECT x, y, z, timestamp AS time FROM G WHERE timestamp >= (SELECT timestamp FROM G ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :startTime)) ASC LIMIT 1) AND timestamp <= (SELECT timestamp FROM G ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :endTime)) ASC LIMIT 1)");
+$sql="SELECT x, y, z, timestamp AS time FROM G WHERE timestamp >= (SELECT timestamp FROM G ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :startTime)) ASC LIMIT 1) AND timestamp <= (SELECT timestamp FROM G ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :endTime)) ASC LIMIT 1)";
+if($userId=='testuser')$sql="SELECT x, y, z, timestamp AS time FROM testG WHERE timestamp >= (SELECT timestamp FROM testG ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :startTime)) ASC LIMIT 1) AND timestamp <= (SELECT timestamp FROM testG ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :endTime)) ASC LIMIT 1)";
+$stmt = $pdo->prepare($sql);
 $stmt->bindParam(':startTime', $startTime);
 $stmt->bindParam(':endTime', $endTime);
 if ($stmt->execute()) {

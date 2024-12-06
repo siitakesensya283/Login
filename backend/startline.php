@@ -18,14 +18,6 @@ $username = 'LAA1593625';
 $password = 'testTEST';
 $port = '3306';
 
-if ($userId == "testuser") {
-    $host = 'mysql309.phy.lolipop.lan';
-    $dbname = 'LAA1593707-testlogin';
-    $username = 'LAA1593707';
-    $password = 'password';
-    $port = '3306';
-}
-
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;port=$port;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -33,7 +25,9 @@ try {
     die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
 
-$stmt = $pdo->prepare("SELECT timestamp AS time FROM CAN WHERE ign='IGN-ON'");
+$sql="SELECT timestamp AS time FROM CAN WHERE ign='IGN-ON'";
+if($userId=='testuser')$sql="SELECT timestamp AS time FROM testCAN WHERE ign='IGN-ON'";
+$stmt = $pdo->prepare($sql);
 if ($stmt->execute()) {
     $startline = $stmt->fetchAll(PDO::FETCH_COLUMN);
     $response = [

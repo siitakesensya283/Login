@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $data = json_decode(file_get_contents('php://input'), true);
 $userId = $data['userId'];
-$userpass = $data['password'];
+$name = $data['name'];
 
 $host = 'mysql309.phy.lolipop.lan';
 $dbname = 'LAA1593625-test';
@@ -26,16 +26,15 @@ try {
     die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
 
-$stmt = $pdo->prepare('SELECT * FROM users WHERE userId = :userId');
-$stmt->bindParam(':userId', $userId);
-$stmt->execute();
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
+$stmt = $pdo->prepare("UPDATE users SET name = :name WHERE userId = :userId");
+$stmt->bindParam(':name', $name);
+$stmt->bindParam(':userId',$userId);
 
-if ($user && password_verify($userpass, $user['password'])) {
+if ($stmt->execute()) {
     $response = [
         'success' => true,
-        'message' => 'ログイン成功',
-        'name' => $user['name']
+        'message' => '登録完了',
+        'name' => $data['name']
     ];
 } else {
     $response = [

@@ -3,6 +3,7 @@ import Login from '@/views/Login.vue';
 import Dashboard from '@/views/Dashboard.vue';
 import Result from '@/views/Result.vue';
 import Admin from '@/views/Admin.vue';
+import Register from '@/views/Register.vue';
 
 const router = createRouter({
     history: createWebHistory('/login/'),
@@ -27,6 +28,11 @@ const router = createRouter({
             path: '/admin',
             name: 'Admin',
             component: Admin,
+        },
+        {
+            path: '/register',
+            name: 'Register',
+            component: Register,
         }
     ]
 });

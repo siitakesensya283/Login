@@ -48,6 +48,10 @@ export default {
                 );
                 if (response.data.success) {
                     this.setUserId(this.userId);
+                    if(response.data.name==""){
+                        this.$router.push("/register");
+                        return;
+                    }
                     this.setUserName(response.data.name);
                     if (this.userId == 'admin001') {
                         this.$router.push("/admin");
