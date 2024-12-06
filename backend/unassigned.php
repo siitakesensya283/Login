@@ -10,9 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 $data = json_decode(file_get_contents('php://input'), true);
-$userId = $data['userId'];
-$startTime = $data['startTime'];
-$endTime = $data['endTime'];
 
 $host = 'mysql309.phy.lolipop.lan';
 $dbname = 'LAA1593625-test';
@@ -27,22 +24,19 @@ try {
     die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
 
-$sql="SELECT x, y, z, timestamp AS time FROM G WHERE timestamp >= (SELECT timestamp FROM G ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :startTime)) ASC LIMIT 1) AND timestamp <= (SELECT timestamp FROM G ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :endTime)) ASC LIMIT 1)";
-if($userId=='testuser')$sql="SELECT x, y, z, timestamp AS time FROM testG WHERE timestamp >= (SELECT timestamp FROM testG ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :startTime)) ASC LIMIT 1) AND timestamp <= (SELECT timestamp FROM testG ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :endTime)) ASC LIMIT 1)";
-$stmt = $pdo->prepare($sql);
-$stmt->bindParam(':startTime', $startTime);
-$stmt->bindParam(':endTime', $endTime);
+$stmt = $pdo->prepare('SELECT userId FROM users WHERE name=""');
+
 if ($stmt->execute()) {
-    $gForce = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $unassignedId = $stmt->fetchAll(PDO::FETCH_COLUMN);
     $response = [
         'success' => true,
-        'message' => 'G取得成功',
-        'gForce' => $gForce,
+        'message' => 'ログイン成功',
+        'unassignedId'=>$unassignedId
     ];
 } else {
     $response = [
         'success' => false,
-        'message' => 'gps取得失敗',
+        'message' => 'ユーザIDまたはパスワードが間違っています。'
     ];
 }
 

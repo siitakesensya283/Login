@@ -26,9 +26,34 @@ try {
     die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
 
+$stmt = $pdo->prepare("SELECT name,password FROM users WHERE userId=:userId");
+$stmt->bindParam(':userId', $userId);
+$stmt->execute();
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($user['name'] == "") {
+    if (!password_verify($userId, $user['password'])) {
+        $response = [
+            'success' => false,
+            'message' => '管理者に連絡してください。',
+        ];
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit();
+    }
+} else {
+    $response = [
+        'success' => false,
+        'message' => 'すでに登録済みです。',
+    ];
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
+}
+
 $stmt = $pdo->prepare("UPDATE users SET name = :name WHERE userId = :userId");
 $stmt->bindParam(':name', $name);
-$stmt->bindParam(':userId',$userId);
+$stmt->bindParam(':userId', $userId);
 
 if ($stmt->execute()) {
     $response = [

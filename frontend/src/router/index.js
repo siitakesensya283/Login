@@ -4,6 +4,8 @@ import Dashboard from '@/views/Dashboard.vue';
 import Result from '@/views/Result.vue';
 import Admin from '@/views/Admin.vue';
 import Register from '@/views/Register.vue';
+import Create from '@/views/Create.vue';
+import Unassigned from '@/views/Unassigned.vue';
 
 const router = createRouter({
     history: createWebHistory('/login/'),
@@ -33,6 +35,16 @@ const router = createRouter({
             path: '/register',
             name: 'Register',
             component: Register,
+        },
+        {
+            path: '/create',
+            name: 'Create',
+            component: Create,
+        },
+        {
+            path:'/unassigned',
+            name:'Unassigned',
+            component:Unassigned,
         }
     ]
 });
