@@ -4,16 +4,19 @@ import VuexPersist from 'vuex-persist';
 const vuexPersist = new VuexPersist({
     key: 'faltec',
     storage: localStorage,
+    filter: (mutation) => mutation.type !== 'resetState',
+});
+
+const getDefaultState = () => ({
+    userName: "",
+    userId: "",
+    startline: "",
+    gps: "",
+    can: "",
 });
 
 const store = createStore({
-    state: {
-        userName: "",
-        userId: "",
-        startline: "",
-        gps: "",
-        can: "",
-    },
+    state: getDefaultState(),
     mutations: {
         setUserName(state, name) {
             state.userName = name;
@@ -29,7 +32,11 @@ const store = createStore({
         },
         setCan(state, can) {
             state.can = can;
-        }
+        },
+        resetState(state) {
+            Object.assign(state, getDefaultState());
+            localStorage.clear('faltec');
+        },
     },
     actions: {
         setUserName({ commit }, name) {
@@ -46,7 +53,10 @@ const store = createStore({
         },
         setCan({ commit }, can) {
             commit("setCan", can);
-        }
+        },
+        resetState({ commit }) {
+            commit("resetState");
+        },
     },
     getters: {
         userName: (state) => state.userName,

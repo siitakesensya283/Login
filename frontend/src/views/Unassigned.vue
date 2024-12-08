@@ -1,7 +1,8 @@
 <template>
     <div class="content">
-        <form @submit.prevent="search">
-            <button class="commonButton">検索</button>
+        <form @submit.prevent="click">
+            <button v-if="!flg" class="commonButton">検索</button>
+            <button v-else class="commonButton">戻る</button>
             <p v-if="error" class="unassigned-error-message">{{ error }}</p>
             <ul v-if="unassignedId.length > 0" class="unassigned-list">
                 <li v-for="(id, index) in unassignedId" :key="index" class="unassigned-item">
@@ -21,24 +22,30 @@ export default {
         return {
             unassignedId: [],
             error: null,
+            flg:false,
         };
     },
     methods: {
-        async search() {//未割り当てのアカウントIDを検索
+        async click() {//未割り当てのアカウントIDを検索
             this.error = null;//エラー文をリセット
-            try {
-                const response = await axios.post(
-                    "https://2024isc1231028.weblike.jp/login/backend/unassigned.php"
-                );
-                if (response.data.success) {
-                    this.unassignedId = response.data.unassignedId;
-                } else {
+            if(this.flg){
+                this.$router.push("/admin");
+            }else{
+                try {
+                    const response = await axios.post(
+                        "https://2024isc1231028.weblike.jp/login/backend/unassigned.php"
+                    );
+                    if (response.data.success) {
+                        this.unassignedId = response.data.unassignedId;
+                        this.flg=!this.flg;
+                    } else {
+                        this.unassignedId = [];
+                        this.error = "データが取得できませんでした。";
+                    }
+                } catch (error) {
                     this.unassignedId = [];
-                    this.error = "データが取得できませんでした。";
+                    this.error = "エラーが発生しました。もう一度お試しください。";
                 }
-            } catch (error) {
-                this.unassignedId = [];
-                this.error = "エラーが発生しました。もう一度お試しください。";
             }
         },
     },

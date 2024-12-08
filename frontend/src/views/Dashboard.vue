@@ -31,15 +31,20 @@ export default {
       gForce: [],
       formatGForce: [],
       formatGps: [],
+      DEFAULT_SPEED_LIMIT:25//制限速度を設定(固定)
     };
   },
   computed: {
     ...mapGetters(["userId", "userName", "startline"]),
     formattedStartline() {
-      return this.startline.map(timestamp => {
-        return timestamp.substring(0, 16);
-      });
-    }
+  return this.startline.map(timestamp => {
+    const [date, time] = timestamp.split(' ');// タイムスタンプを分解
+    const [year, month, day] = date.split('-');
+    const [hour, minute, second] = time.split(':');
+    return `${year}年${month}月${day}日 ${hour}時${minute}分${second}秒`;
+  });
+}
+
   },
   methods: {
     ...mapMutations(["setGps", "setCan"]),
@@ -88,14 +93,14 @@ export default {
 
     async canFormat() {
       const canFlg = this.can.map(({ id, ign, VehicleSpeed, ldw, time }) => {
-        const sFlg = VehicleSpeed <= 25 ? 0 :
-          VehicleSpeed <= 30 ? 1 : 2;
-        const lFlg = ldw == 1 ? 1 : 0;
+        const sFlg = VehicleSpeed <= this.DEFAULT_SPEED_LIMIT ? 0 ://速度超過のflgを追加
+          VehicleSpeed <= this.DEFAULT_SPEED_LIMIT+5 ? 1 : 2;
+        const lFlg = ldw == 1 ? 1 : 0;//車線逸脱のflgを設定
         return [id, ign, VehicleSpeed, ldw, time, sFlg, lFlg];
       });
-      this.setCan(canFlg);
+      this.setCan(canFlg);//storeに格納
       this.canFlg = canFlg;
-      this.can = [];
+      this.can = [];//canをリセット
     },
 
     async getGForce() {

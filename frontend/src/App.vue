@@ -14,20 +14,24 @@
 </template>
 
 <script setup>
-import { RouterView, useRoute, useRouter } from 'vue-router'
+import { RouterView, useRoute, useRouter } from 'vue-router';
 import { computed } from 'vue';
-import '@/assets/style.css'
+import { useStore } from 'vuex'; // Vuexストアをインポート
+import '@/assets/style.css';
 
+// Vue Routerのセットアップ
 const route = useRoute();
 const router = useRouter();
-const pageTitle = computed(() => {//ページのタイトルを設定
+const store = useStore(); // Vuexストアを取得
+
+const pageTitle = computed(() => { // ページのタイトルを設定
   switch (route.name) {
     case 'Dashboard':
       return 'ダッシュボード';
     case 'Login':
       return 'ログイン';
     case 'Result':
-      return 'リザルト'
+      return 'リザルト';
     case 'Admin':
       return '管理者ページ';
     case 'Register':
@@ -41,8 +45,11 @@ const pageTitle = computed(() => {//ページのタイトルを設定
   }
 });
 
-const logout = () => {    // ログアウト処理
+const logout = () => { // ログアウト処理
   localStorage.removeItem('token');
+  store.dispatch('resetState');
   router.push('/');
 };
 </script>
+
+
