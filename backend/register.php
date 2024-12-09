@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $data = json_decode(file_get_contents('php://input'), true);
 $userId = $data['userId'];
 $name = $data['name'];
+$userpass=$data['password'];
 
 $host = 'mysql309.phy.lolipop.lan';
 $dbname = 'LAA1593625-test';
@@ -51,9 +52,19 @@ if ($user['name'] == "") {
     exit();
 }
 
-$stmt = $pdo->prepare("UPDATE users SET name = :name WHERE userId = :userId");
+if (password_verify($userpass, $user['password'])){
+    $response=[
+        'success'=>false,
+        'message'=>'パスワードが変更されていません。'
+    ];
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
+}
+$stmt = $pdo->prepare("UPDATE users SET name = :name,password=:userpass WHERE userId = :userId");
 $stmt->bindParam(':name', $name);
 $stmt->bindParam(':userId', $userId);
+$stmt->bindParam(':userpass',$userpass);
 
 if ($stmt->execute()) {
     $response = [

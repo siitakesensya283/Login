@@ -26,18 +26,26 @@ try {
 } catch (PDOException $e) {
     die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
-$sql="SELECT id,latitude,longitude,timestamp AS time FROM GPS WHERE timestamp >= (SELECT timestamp FROM GPS ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :startTime)) ASC LIMIT 1)AND timestamp <= (SELECT timestamp FROM GPS ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :endTime)) ASC LIMIT 1)";
-if($userId=='testuser')$sql="SELECT id,latitude,longitude,timestamp AS time FROM testGPS WHERE timestamp >= (SELECT timestamp FROM testGPS ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :startTime)) ASC LIMIT 1)AND timestamp <= (SELECT timestamp FROM testGPS ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :endTime)) ASC LIMIT 1)";
+$sql = "SELECT id,latitude,longitude,time FROM GPS WHERE time >= (SELECT time FROM GPS ORDER BY ABS(TIMESTAMPDIFF(SECOND, time, :startTime)) ASC LIMIT 1)AND time <= (SELECT time FROM GPS ORDER BY ABS(TIMESTAMPDIFF(SECOND, time, :endTime)) ASC LIMIT 1)";
+if ($userId == 'testuser')
+    $sql = "SELECT id,latitude,longitude,timestamp AS time FROM testGPS WHERE timestamp >= (SELECT timestamp FROM testGPS ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :startTime)) ASC LIMIT 1)AND timestamp <= (SELECT timestamp FROM testGPS ORDER BY ABS(TIMESTAMPDIFF(SECOND, timestamp, :endTime)) ASC LIMIT 1)";
 $stmt = $pdo->prepare($sql);
 $stmt->bindParam(':startTime', $startTime);
 $stmt->bindParam(':endTime', $endTime);
 if ($stmt->execute()) {
     $gps = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $response = [
-        'success' => true,
-        'message' => 'gps取得成功',
-        'gps' => $gps,
-    ];
+    if ($gps != []) {
+        $response = [
+            'success' => true,
+            'message' => 'gps取得成功',
+            'gps' => $gps,
+        ];
+    } else {
+        $response = [
+            'success' => false,
+            'message' => 'gps取得失敗',
+        ];
+    }
 } else {
     $response = [
         'success' => false,

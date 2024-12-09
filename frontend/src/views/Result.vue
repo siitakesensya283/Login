@@ -45,6 +45,7 @@ export default {
     },
 
     async initializeMap() {//最初に呼び出し
+      console.log(this.gps);
       const bounds = new mapboxgl.LngLatBounds();
       const center = this.calculateCenter();
       mapboxgl.accessToken = this.mapboxToken;

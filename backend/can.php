@@ -26,19 +26,29 @@ try {
     die(json_encode(['success' => false, 'message' => 'データベース接続失敗']));
 }
 
-$sql="WITH endTime AS (SELECT id, ign, VehicleSpeed, ldw, timestamp AS time FROM CAN WHERE timestamp > :selectedTime AND ign = 'IGN-OFF' ORDER BY timestamp LIMIT 1) SELECT id, ign, VehicleSpeed, ldw, timestamp AS time FROM CAN WHERE timestamp >= :selectedTime AND timestamp <= (SELECT time FROM endTime) ORDER BY timestamp";
-if($userId=='testuser')$sql="WITH endTime AS (SELECT id, ign, VehicleSpeed, ldw, timestamp AS time FROM testCAN WHERE timestamp > :selectedTime AND ign = 'IGN-OFF' ORDER BY timestamp LIMIT 1) SELECT id, ign, VehicleSpeed, ldw, timestamp AS time FROM testCAN WHERE timestamp >= :selectedTime AND timestamp <= (SELECT time FROM endTime) ORDER BY timestamp";
+$sql = "WITH endTime AS (SELECT id, ign, VehicleSpeed, ldw, timestamp AS time FROM CAN WHERE timestamp > :selectedTime AND ign = 'IGN-OFF' ORDER BY timestamp LIMIT 1) SELECT id, ign, VehicleSpeed, ldw, timestamp AS time FROM CAN WHERE timestamp >= :selectedTime AND timestamp <= (SELECT time FROM endTime) ORDER BY timestamp";
+if ($userId == 'testuser')
+    $sql = "WITH endTime AS (SELECT id, ign, VehicleSpeed, ldw, timestamp AS time FROM testCAN WHERE timestamp > :selectedTime AND ign = 'IGN-OFF' ORDER BY timestamp LIMIT 1) SELECT id, ign, VehicleSpeed, ldw, timestamp AS time FROM testCAN WHERE timestamp >= :selectedTime AND timestamp <= (SELECT time FROM endTime) ORDER BY timestamp";
 $stmt = $pdo->prepare($sql);
 $stmt->bindParam('selectedTime', $selectedTime);
 if ($stmt->execute()) {
     $can = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $response = [
-        'success' => true,
-        'can' => $can,
-    ];
+    if ($can != []) {
+        $response = [
+            'success' => true,
+            'can' => $can,
+            'message' => 'CAN取得成功'
+        ];
+    } else {
+        $response = [
+            'success' => false,
+            'message' => 'CAN取得失敗'
+        ];
+    }
 } else {
     $response = [
-        'success' => false
+        'success' => false,
+        'message' => 'CAN取得失敗'
     ];
 }
 

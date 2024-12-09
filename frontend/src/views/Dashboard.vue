@@ -162,6 +162,7 @@ export default {
     },
 
     async formattingGps() {//イベント込みのgpsの作成
+      console.log(this.gps)
       let formatGps = this.gps.map(gpsPoint => ({
         longitude: gpsPoint.longitude,
         latitude: gpsPoint.latitude,
@@ -189,7 +190,7 @@ export default {
         }
       });
       this.getMessage();
-      this.setGps(formatGps);
+      this.setGps(this.formatGps);
       this.gps = [];
     },
 
