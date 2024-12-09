@@ -10,6 +10,7 @@
             {{ item }}
           </option>
         </select>
+        <p v-if="error">{{ error }}</p>
       </section>
     </main>
   </div>
@@ -31,19 +32,20 @@ export default {
       gForce: [],
       formatGForce: [],
       formatGps: [],
-      DEFAULT_SPEED_LIMIT:25//制限速度を設定(固定)
+      error: "",
+      DEFAULT_SPEED_LIMIT: 25//制限速度を設定(固定)
     };
   },
   computed: {
     ...mapGetters(["userId", "userName", "startline"]),
     formattedStartline() {
-  return this.startline.map(timestamp => {
-    const [date, time] = timestamp.split(' ');// タイムスタンプを分解
-    const [year, month, day] = date.split('-');
-    const [hour, minute, second] = time.split(':');
-    return `${year}年${month}月${day}日 ${hour}時${minute}分${second}秒`;
-  });
-}
+      return this.startline.map(timestamp => {
+        const [date, time] = timestamp.split(' ');// タイムスタンプを分解
+        const [year, month, day] = date.split('-');
+        const [hour, minute, second] = time.split(':');
+        return `${year}年${month}月${day}日 ${hour}時${minute}分${second}秒`;
+      });
+    }
 
   },
   methods: {
@@ -53,13 +55,6 @@ export default {
       this.selectedIndex = parseInt(event.target.value, 10);
       if (this.selectedIndex >= 0) {
         await this.getCan();
-        await this.getEndTime();
-        await this.canFormat();
-        await this.getGForce();
-        await this.formattingGForce();
-        await this.getGps();
-        await this.formattingGps();
-        this.$router.push("/result");
       }
     },
 
@@ -76,6 +71,9 @@ export default {
           );
           if (response.data.success) {
             this.can = response.data.can;
+            await this.getEndTime();
+            await this.canFormat();
+            await this.getGForce();
           } else {
             this.error = response.data.message;
           }
@@ -94,7 +92,7 @@ export default {
     async canFormat() {
       const canFlg = this.can.map(({ id, ign, VehicleSpeed, ldw, time }) => {
         const sFlg = VehicleSpeed <= this.DEFAULT_SPEED_LIMIT ? 0 ://速度超過のflgを追加
-          VehicleSpeed <= this.DEFAULT_SPEED_LIMIT+5 ? 1 : 2;
+          VehicleSpeed <= this.DEFAULT_SPEED_LIMIT + 5 ? 1 : 2;
         const lFlg = ldw == 1 ? 1 : 0;//車線逸脱のflgを設定
         return [id, ign, VehicleSpeed, ldw, time, sFlg, lFlg];
       });
@@ -115,6 +113,8 @@ export default {
         );
         if (response.data.success) {
           this.gForce = response.data.gForce;
+          await this.formattingGForce();
+          await this.getGps();
         } else {
           this.error = response.data.message;
         }
@@ -151,8 +151,11 @@ export default {
             endTime: this.endTime
           }
         );
+        console.log(response.data);
         if (response.data.success) {
           this.gps = response.data.gps;
+          await this.formattingGps();
+          this.$router.push("/result");
         } else {
           this.error = response.data.message;
         }
@@ -162,7 +165,6 @@ export default {
     },
 
     async formattingGps() {//イベント込みのgpsの作成
-      console.log(this.gps)
       let formatGps = this.gps.map(gpsPoint => ({
         longitude: gpsPoint.longitude,
         latitude: gpsPoint.latitude,

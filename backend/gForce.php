@@ -44,13 +44,13 @@ if ($stmt->execute()) {
     } else {
         $response = [
             'success' => false,
-            'message' => 'gps取得失敗',
+            'message' => 'G取得失敗',
         ];
     }
 } else {
     $response = [
         'success' => false,
-        'message' => 'gps取得失敗',
+        'message' => 'gG取得失敗',
     ];
 }
 
